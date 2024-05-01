@@ -1,15 +1,15 @@
-import { createStore, applyMiddleware, combineReducers } from 'redux';
+import { configureStore } from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
-import { songsReducer } from './reducers';
-import rootSaga from './sagas';
-
-const rootReducer = combineReducers({
-  songs: songsReducer,
-});
+import rootReducer from './rootReducer';
+import rootSaga from './sagas/rootSaga';
 
 const sagaMiddleware = createSagaMiddleware();
 
-const store = createStore(rootReducer, applyMiddleware(sagaMiddleware));
+const store = configureStore({
+  reducer: rootReducer,
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(sagaMiddleware),
+  devTools: process.env.NODE_ENV !== 'production', 
+});
 
 sagaMiddleware.run(rootSaga);
 

@@ -1,41 +1,61 @@
-import './App.css';
-import React from 'react';
+/** @jsxImportSource @emotion/react */
+import styled from '@emotion/styled';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchSongsRequest } from './redux/actions/songActions';
+
+const Container = styled.div`
+  padding: 20px;
+  background-color: #121212;
+  color: #fff;
+  min-height: 100vh;
+`;
+
+const Title = styled.h1`
+  color: #1DB954;
+`;
+
+const ErrorText = styled.p`
+  color: #E74C3C;
+`;
+
+const SongList = styled.ul`
+  list-style: none;
+  padding: 0;
+`;
+
+const SongItem = styled.li`
+  margin-bottom: 10px;
+`;
+
+const SongDetail = styled.div`
+  margin: 5px 0;
+`;
 
 function App() {
-  // Static list of songs for the UI
-  const songs = [
-    { id: 1, title: 'Song Title 1', artist: 'Artist Name 1', year: 2001 },
-    { id: 2, title: 'Song Title 2', artist: 'Artist Name 2', year: 2002 },
-    // Add more static song data here
-  ];
+  const dispatch = useDispatch();
+  const { songs, error } = useSelector(state => state.songs);
+
+  useEffect(() => {
+    dispatch(fetchSongsRequest());
+  }, [dispatch]);
 
   return (
-    <div>
-      <h1>Song Management App</h1>
-      <div>
-        <h2>Add New Song</h2>
-        {/* Add Song Form - Static UI */}
-        <form>
-          <input type="text" placeholder="Title" />
-          <input type="text" placeholder="Artist" />
-          <input type="number" placeholder="Year" />
-          <button type="submit">Add Song</button>
-        </form>
-      </div>
-      <div>
-        <h2>Songs List</h2>
-        {/* Songs List */}
-        {songs.map((song) => (
-          <div key={song.id}>
-            <p>Title: {song.title}</p>
-            <p>Artist: {song.artist}</p>
-            <p>Year: {song.year}</p>
-            <button>Edit</button>
-            <button>Delete</button>
-          </div>
+    <Container>
+      <Title>Songs</Title>
+      {error && <ErrorText>Error: {error}</ErrorText>}
+      <SongList>
+        {songs.map((song, index) => (
+          <SongItem key={song.song + song.artist}>
+            {song.song} - {song.artist}
+            <SongDetail>This Week: {song.this_week}</SongDetail>
+            <SongDetail>Last Week: {song.last_week || 'N/A'}</SongDetail>
+            <SongDetail>Peak Position: {song.peak_position}</SongDetail>
+            <SongDetail>Weeks on Chart: {song.weeks_on_chart}</SongDetail>
+          </SongItem>
         ))}
-      </div>
-    </div>
+      </SongList>
+    </Container>
   );
 }
 

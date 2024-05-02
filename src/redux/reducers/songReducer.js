@@ -25,6 +25,18 @@ const songReducer = (state = initialState, action) => {
         songs: [],
         error: action.payload,
       };
+    case actionTypes.UPDATE_SONG_SUCCESS:
+      return {
+        ...state,
+        songs: state.songs.map((song) =>
+          song.id === action.payload.id ? action.payload : song
+        ),
+      };
+    case actionTypes.UPDATE_SONG_FAILURE:
+      return {
+        ...state,
+        error: action.payload,
+      };
     case actionTypes.ADD_SONG:
       return {
         ...state,
@@ -34,11 +46,6 @@ const songReducer = (state = initialState, action) => {
       return {
         ...state,
         songs: state.songs.filter(song => song.id !== action.payload),
-      };
-    case actionTypes.UPDATE_SONG:
-      return {
-        ...state,
-        songs: state.songs.map(song => song.id === action.payload.id ? action.payload : song),
       };
     default:
       return state;
